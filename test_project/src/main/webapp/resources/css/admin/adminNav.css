@@ -1,0 +1,31 @@
+@charset "UTF-8";
+.admin_navi_wrap{
+    width: 20%;
+    height: 300px;
+    float:left;
+    height: 100%;
+}
+.admin_navi_wrap li{
+	margin-top: 10px;
+    display: block;
+    height: 80px;
+    line-height: 80px;
+    text-align: center;
+}
+.admin_navi_wrap li a{
+    display: block;
+    height: 100%;
+    width: 95%;
+    margin: 0 auto;
+    cursor: pointer;
+    font-size: 25px;
+    font-weight: bolder;
+}
+.admin_navi_wrap li a:link {color: black;}
+.admin_navi_wrap li a:visited {color: black;}
+.admin_navi_wrap li a:active {color: black;}
+.admin_navi_wrap li a:hover {color: black;}
+.admin_navi_wrap li a:hover{
+		text-decoration: underline;
+		background: #c8c8c8;
+	}

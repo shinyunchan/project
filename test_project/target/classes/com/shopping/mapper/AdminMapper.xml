@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.shopping.mapper.AdminMapper">
+
+<resultMap id="admin" type="com.shopping.model.ProductVO">
+
+	<id column="productId" property="productId"/>
+	
+	<result column="productName" property="productName"/>
+	
+	<result column="productPrice" property="productPrice"/>
+	
+	<result column="productStock" property="productStock"/>
+	
+	<result column="productIntro" property="productIntro"/>
+	
+	<result column="productContents" property="productContents"/>
+
+</resultMap>
+
+	
+ <!-- 작가 등록 -->
+  	<insert id="productEnroll">
+  	
+  	<selectKey resultType="int" keyProperty="productId" order="AFTER">
+  		
+  			SELECT MAX(productId) FROM shopping_product
+  		
+  		</selectKey>
+  		
+  		
+  		insert into shopping_product(productName, productId, productPrice, productStock, productIntro, productContents)
+		values (#{productName},#{productId},#{productPrice},#{productStock},#{productIntro},#{productContents})
+
+  	</insert>
+  	
+ 	<!-- 상품 리스트 -->
+	<select id="goodsGetList" resultType="com.shopping.model.ProductVO">
+	
+		<![CDATA[
+          select * from (
+              select
+                  rownum as rn, productId, productName, regdate, updatedate
+            from shopping_product 
+            where
+             
+    ]]>         
+            <if test="keyword != null">
+                productName like '%'||#{keyword}||'%' and
+            </if>
+            
+    <![CDATA[        
+             rownum <= #{pageNum}*#{amount}
+            )
+        where rn > (#{pageNum} - 1) * #{amount}
+      ]]>
+
+	</select>
+  	
+  	<!-- 상품 총 갯수 -->
+  	<select id="goodsGetTotal" resultType="int">
+  	
+  		select count(*) from shopping_product
+          
+          <if test="keyword != null">
+          
+             where productName like '%' || #{keyword} || '%'
+          
+          </if>
+  		
+  	</select>
+  	
+  	<select id="goodsDetail" resultMap="admin">
+  		select * from shopping_product where productId=#{productId}
+  	</select>
+  	
+  	<select id="idCheck" resultType="int">
+  		select count(*) from shopping_product where productId = #{productId}
+  	</select>
+  	
+  	<delete id="goodsDelete">
+		delete from shopping_product where productId=#{productId}
+	</delete>
+  	
+  	<delete id="deleteImageAll">
+	
+		delete FROM product_image where productId=#{productId}
+	
+	</delete>
+  	
+  	<update id="goodsModify">
+		update shopping_product set 
+		productName=#{productName},
+		productPrice=#{productPrice},
+		productStock=#{productStock},
+		productIntro=#{productIntro},
+		productContents=#{productContents}
+		where productId=#{productId }
+	</update>
+  	
+  	<!-- 지정 상품 이미지 정보 얻기 -->
+	<select id="getAttachInfo" resultType="com.shopping.model.AttachImageVO">
+	
+		select * from shopping_product where productId = #{productId}
+	
+	</select>
+  	
+  	<!-- 이미지 등록 -->
+	<insert id="imageEnroll">
+	
+		insert into product_image(productId, fileName, uploadPath, uuid) values (#{productId}, #{fileName}, #{uploadPath}, #{uuid})
+	
+	</insert>
+	
+	
+</mapper>
+
+

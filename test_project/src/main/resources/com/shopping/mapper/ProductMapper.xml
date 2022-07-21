@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.shopping.mapper.ProductMapper">
+	
+	
+	<!-- criteria(검색조건) -->
+	<sql id="criteria">
+
+	  	<trim prefix="(" suffix=") AND" prefixOverrides="AND">
+	  		<foreach item="type" collection="typeArr">
+	  			<trim prefix="AND">
+	  				<choose>
+	  					<when test="type == 'A'.toString()">
+	  						<trim prefixOverrides="or">
+			  					<foreach collection="productArr" item="productName">
+			  						<trim prefix="or">
+			  							productName = #{productName}
+			  						</trim>
+			  					</foreach>  						
+	  						</trim>
+	  					</when>				 					
+	  				</choose>
+	  			</trim>
+	  		</foreach>
+	  	</trim>
+
+	</sql>
+
+	
+	<!-- 상품 검색 -->
+	<select id="getGoodsList" resultType="com.shopping.model.ProductVO">
+	
+		<![CDATA[
+          select * from (
+              select
+                  rownum as rn, productId, productName, productPrice, regdate, updatedate
+            from shopping_product 
+            where
+             
+    ]]>         
+            <if test="keyword != null">
+                productName like '%'||#{keyword}||'%' and
+            </if>
+	    
+	    <include refid="criteria"></include>
+            
+    <![CDATA[        
+             rownum <= #{pageNum}*#{amount}
+            )
+        where rn > (#{pageNum} - 1) * #{amount}
+      ]]>
+	    
+	    
+	</select>
+	
+	<!-- 상품 총 개수 -->
+	<select id="goodsGetTotal" resultType="int">
+	
+		select count(*) from shopping_product
+          
+          <if test="keyword != null">
+          
+             where productName like '%' || #{keyword} || '%'
+          
+          </if>
+		
+	</select>
+
+	<!-- 상품 이름 리스트 요청 -->
+	<select id="getProductNameList" resultType="String">
+	
+		select productName, productPrice from shopping_product where productName like '%' || #{keyword} || '%'
+	
+	</select>
+	
+	
+		<!-- 상품 정보 -->
+	<select id="getGoodsInfo" resultType="com.shopping.model.ProductVO">
+	
+            select PRODUCTID,PRODUCTNAME,PRODUCTPRICE,PRODUCTSTOCK,PRODUCTINTRO,PRODUCTCONTENTS
+            from shopping_product
+            where productId = ${productId}
+	
+	</select>
+	
+	<!-- 메인화면 상품출력 -->
+	<select id="likeSelect" resultType="com.shopping.model.SelectDTO">
+	
+		select * from
+		(select rownum as rn, productId, productName
+		from shopping_product
+		order by productId desc nulls last)
+		<![CDATA[
+		where rn < 9
+		]]>	
+	
+	</select>
+	
+ </mapper>

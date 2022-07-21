@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.shopping.mapper.CartMapper">
+	
+	<!-- 카트 추가 -->
+	<insert id="addCart">
+	
+		insert into shopping_cart(cartId, memberId, productId, amount)
+		values(seq_cart.nextval, #{memberId}, #{productId}, #{amount}) 
+	
+	</insert>
+	
+	
+	<!-- 카트 삭제 -->
+	<delete id="deleteCart">
+	
+		delete from shopping_cart where cartId = #{cartId}
+	
+	</delete>
+	
+	<!-- 카트 수량 수정 -->
+	<update id="modifyCount">
+	
+		update shopping_cart set amount=#{amount} where cartId = #{cartId}
+	
+	</update>
+	
+	
+	<!-- 카트 목록 -->
+	<select id="getCart" resultType="com.shopping.model.CartDTO">
+
+	  select a.cartId, a.memberId, a.productId, a.amount, b.productName, b.productPrice
+      from shopping_cart a left outer join shopping_product b on a.productId = b.productId
+      where memberId = #{memberId}
+	
+	</select>
+	
+	<!-- 카트 확인 -->
+	<select id="checkCart" resultType="com.shopping.model.CartDTO">
+	
+		select * from shopping_cart 
+		where memberId = #{memberId} and productId = #{productId}
+	
+	</select>
+	
+	
+  </mapper>

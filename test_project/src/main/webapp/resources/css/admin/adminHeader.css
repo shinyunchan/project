@@ -1,0 +1,13 @@
+@charset "UTF-8";
+.top_gnb_area{
+    width: 100%;
+    height: 50px;
+    background-color: #eae1d8;
+    position:relative;
+    border-bottom: 5px solid white;
+}
+.admin_top_wrap{
+    height:110px;
+    line-height: 110px;
+    background-color: #eae1d8;
+}
